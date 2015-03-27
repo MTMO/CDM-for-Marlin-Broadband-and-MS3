@@ -1,0 +1,90 @@
+- Prerequisite
+To render marlin protected content,
+you need to modify the Multimedia framework and integrate Marlin-plugin for media drm.
+you might need to modify the MPEG4Extractor for ipmp and create a new extractor for abs.
+
+- Environment Setup to use Test Application
+To run the Test Application, you need to prepare following data and server.
+ - actiontoken for registration
+ - actiontoken for license acquisition
+ - serviceID and AccountID for actiontoken process
+ - Encounter marlin license server for actiontoken process
+ - mp4 ipmp content
+ - mp4 cenc audio content
+ - mp4 cenc video content
+ - content protection information of above content, such as pssh, sinf
+ - mpd file for abs content
+
+1.You need to store the following sinf & pssh data to TestData/box_data folder in device.
+
+video.sinf : sinf box data for video track of offline ipmp content
+audio.sinf : sinf box data for audio track of offline ipmp content
+cenc_video_pssh_box.dat : pssh box data for video track of abs content
+cenc_audio_pssh_box.dat : pssh box data for audio track of abs content
+
+ E.g)
+  adb push video.sinf sdcard/TestData/box_data/
+
+2.You need to store a actiontoken file to TestData/actiontoken folder in device.
+ E.g)
+  adb push actionToken_for_registration.xml sdcard/TestData/actiontoken/
+
+3.You need to store a Marlin protected content (for offline) to TestData/VIDEO folder in device.
+ E.g)
+  adb push sample.mp4 sdcard/TestData/VIDEO/
+
+4.You need to store the abs_content_list file to TestData/ in device.
+  E.g)
+   adb push abs_content_list sdcard/TestData/
+
+ abs_content_list is described in the following forms.
+ "DisplayName,VideoPath,default_kid_for_video,AudioPath,default_kid_for_audio,MPD_PATH"
+
+ E.g)
+ - Display name : The unique name which is shown on test appllciation.
+                  User can set any name in here.
+ - Video path : URL of video stream for abs content.
+                If the encounter server ip address is 192.168.1.1:8080 and filename is sample.snv,
+                set http://192.168.1.1:8080/sample.snv.
+ - default kid for video: The default kid of video stream for abs content.
+                          User confirm a kid in pssh box for video stream and set it.
+ - Audio path : URL of audio stream for abs content.
+                If the encounter server ip address is 192.168.1.1:8080 and filename is sample.sna,
+                set http://192.168.1.1:8080/sample.sna.
+ - default kid for audio: The default kid of audio stream for abs content.
+                          User confirm a kid in pssh box for audio stream and set it.
+ - MPD path: URL of MPD for abs content.
+             If the encounter server ip address is 192.168.1.1:8080 and filename is sample.mpd,
+             set http://192.168.1.1:8080/sample.mpd.
+
+ ABS-CONTENT-01,http://192.168.1.1:8080/sample.snv,20000000000000000000000000000001,http://192.168.1.1:8080/sample.sna,10000000000000000000000000000001,http://192.168.1.1:8080/sample.mpd
+
+5.You need to store the test_prop file to TestData/ in device.
+  E.g)
+   adb push test_prop sdcard/TestData/
+
+ ServiceID & AccountID are described in test_prop.
+ It may be used in marlin SDK for license acquisition or registration process.
+ ServiceID is described in the first line.
+ AccountID is described in the second line.
+
+  E.g)
+   urn:marlin:organization:test:service-provider:1
+   0000001
+
+- Usage
+ You can switch offline or abs mode.
+  [offline mode]
+  menu -> Switch Mode -> offline
+
+  [abs mode]
+  menu -> Switch Mode -> abs
+
+ - Step by step instruction to play
+  1.Start MarlinMediaDrmTest.
+  2.Select action token to registration.
+  3.Tap "Registration" button.
+  4.Select action token to acquire rights.
+  5.Tap "Get rights" button.
+  6.Select content to play.
+  7.After SUCCESS was displayed, Tap "Start movie" button.

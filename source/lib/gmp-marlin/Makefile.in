@@ -1,0 +1,7 @@
+INSTALL_TARGETS += MARLIN_GMP_PLUGIN
+MARLIN_GMP_PLUGIN_DEST = $(DEPTH)/dist/bin/gmp-marlin/0.1
+MARLIN_GMP_PLUGIN_FILES = \
+  $(SHARED_LIBRARY) \
+  $(srcdir)/marlin.info
+
+include $(topsrcdir)/config/rules.mk

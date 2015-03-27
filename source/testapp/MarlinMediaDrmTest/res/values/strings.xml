@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MarlinMediaDrmTest</string>
+    <string name="action_settings">Settings</string>
+    <string name="str_registration">Registration</string>
+    <string name="str_check_regist">Check Status</string>
+    <string name="str_license">Get rights</string>
+    <string name="str_deregistration">Deregistration</string>
+    <string name="str_subs_registration">Subs-Registration</string>
+    <string name="str_subs_deregistration">Subs-Deregistration</string>
+    <string name="str_check_rights">Check rights</string>
+    <string name="str_remove_rights">Remove rights</string>
+    <string name="str_launch_play_movie">Start movie</string>
+    <string name="str_launch_movie_app">Start movie</string>
+    <string name="str_show_mpd">Show MPD</string>
+    <string name="str_success">Success</string>
+    <string name="str_error">Error</string>
+    <string name="str_fail_with_result">Fail: %s</string>
+    <string name="str_status_code">StatusCode: %d</string>
+    <string name="str_available">Available</string>
+    <string name="str_remove_success">Rights Removed</string>
+    <string name="str_processing">Please wait&#8230;</string>
+
+</resources>

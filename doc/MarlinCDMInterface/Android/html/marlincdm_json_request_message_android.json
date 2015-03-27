@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-03/schema",
+  "name": "marlincdm_json_request_message",
+  "description": "Marlin Content Decryption Module json request message",
+  "type": "object",
+  "properties": {
+	"version": {
+		"description": "version number of marlin cdm json message format",
+		"type": "string",
+		"required": false,
+		"enum": ["1.0"]
+	},
+	"message_type": {
+		"description": "data type of json message",
+		"type": "string",
+		"enum": ["none", "httpRequest", "license", "prop", "ltp"],
+		"required": true
+	},
+	"remaining_steps": {
+		"description": "remaining steps to complete http transaction",
+		"type": "integer",
+		"required": true
+	},
+	"httpRequest":{
+		"descripion": "http request message. this property is required if message_type is httpRequest",
+		"type": "object",
+		"properties": {
+			"method":{
+				"description": "either GET or POST to indicate the HTTP request method",
+				"type": "string",
+				"required": true,
+				"enum": ["GET",  "POST"]
+			},
+			"url":{
+				"description": "server url. this property is required for Android case.",
+				"type": "string",
+				"required": false
+			},
+			"headers":{
+				"description": "http header parameters. an array of one or more JSON objects",
+				"type": "array",
+				"required": true,
+				"items": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"description": "string specifying the HTTP header name",
+							"type": "string",
+							"example": "Content-type"
+						},
+						"value": {
+							"description": "string specifying the HTTP header value",
+							"type": "string",
+							"example": "text/xml"
+						}
+					}
+				}
+			},
+			"body":{
+				"description": "base64-encoded string containing the HTTP message body",
+				"type": "string",
+				"required": true,
+				"example":"PGhlbGxvLz4K"
+			}
+		}
+	},
+	"license":{
+		"description": "license data which is encoded as base64. this property is required if message_type is license. this proerty is used only for Android case",
+		"type": "string"
+	},
+	"prop":{
+		"description": "queried data which is triggered by initdata property information. this property is required if message_type is property. this proerty is used only for Android case",	
+		"type": "string"
+	},
+	"ltp":{
+		"description": "ltp message for ltp processing which is encoded base64. this property is required if message_type is ltp. this proerty is used only for Android case",	
+		"type": "object",
+		"properties"{
+			"message": {
+				"description": "ltp message for ltp processing. It is encoded base64",
+				"type": "string"
+			}
+		}
+	}
+  }
+}
