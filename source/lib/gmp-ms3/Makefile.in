@@ -1,0 +1,7 @@
+INSTALL_TARGETS += MARLIN_GMP_MS3_PLUGIN
+MARLIN_GMP_MS3_PLUGIN_DEST = $(DEPTH)/dist/bin/gmp-ms3/0.1
+MARLIN_GMP_MS3_PLUGIN_FILES = \
+  $(SHARED_LIBRARY) \
+  $(srcdir)/ms3.info
+
+include $(topsrcdir)/config/rules.mk

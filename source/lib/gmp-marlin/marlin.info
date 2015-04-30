@@ -1,4 +1,4 @@
-Name: marlin
+Name: marlin bb eme plugin
 Description: provides decryption of Marlin encrypted data
 Version: 0.1
 APIs: eme-decrypt[com.marlin-drm.broadband.1_0]

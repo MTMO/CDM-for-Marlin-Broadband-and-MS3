@@ -2,10 +2,10 @@ marlin_cdm_path = '../../../../vendor/mtmo/libmarlincdmplugin'
 marlin_agenthl_path = '../../../../vendor/mtmo/marlin-agent-handler'
 
 SOURCES += sorted([
-        'gmp-marlin.cpp',
+        'gmp-ms3.cpp',
 ])
 
-SharedLibrary("marlin")
+SharedLibrary("ms3")
 
 DEFINES['JSON_IS_AMALGAMATION'] = True
 

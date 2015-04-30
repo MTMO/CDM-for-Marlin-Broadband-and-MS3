@@ -1,0 +1,4 @@
+Name: marlin ms3 eme plugin
+Description: provides decryption of Marlin encrypted data
+Version: 0.1
+APIs: eme-decrypt[com.marlin-drm.ms3.1_0]

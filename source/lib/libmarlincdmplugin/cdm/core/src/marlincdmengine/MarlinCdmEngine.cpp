@@ -219,6 +219,11 @@ mcdm_status_t MarlinCdmEngine::GenerateKeyRequest(const mcdm_SessionId_t& sessio
     } else if ((0 == memcmp(mimeType->c_str(), MIME_TYPE_EME_CENC.c_str(), MIME_TYPE_EME_CENC.length()))
                 || (0 == memcmp(mimeType->c_str(), MIME_TYPE_EME_KEYIDS.c_str(), MIME_TYPE_EME_KEYIDS.length()))) {
         // EME Case
+        if (keyType != KEY_TYPE_STREAMING) {
+            LOGE("Cannot use this Key Type[%d] with the EME case", keyType);
+            status = ERROR_ILLEGAL_ARGUMENT;
+            goto EXIT;
+        }
         status = generateKeyRequestForEME(session_id,
                                           init_data,
                                           keyType,

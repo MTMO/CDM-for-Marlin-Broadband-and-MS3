@@ -59,30 +59,30 @@ typedef map<eme_key_id, eme_key> eme_key_set;
 
 static GMPPlatformAPI* sPlatformAPI = nullptr;
 
-class MarlinDecryptor;
+class MS3Decryptor;
 
-static vector<MarlinDecryptor*> sDecryptors;
+static vector<MS3Decryptor*> sDecryptors;
 
-class MarlinDecryptor : public GMPDecryptor {
+class MS3Decryptor : public GMPDecryptor {
 public:
-    explicit MarlinDecryptor(GMPDecryptorHost* aHost)
+    explicit MS3Decryptor(GMPDecryptorHost* aHost)
       : mCDM(nullptr)
       , mCallback(nullptr)
       , mHost(aHost)
       , mDecryptNumber(0)
     {
-        LOGD(("MarlinDecryptor"));
+        LOGD(("MS3Decryptor"));
     }
 
     /* static */
-    MarlinDecryptor*
+    MS3Decryptor*
     Get(const GMPEncryptedBufferMetadata* aCryptoData)
     {
       const string kid((const char*)aCryptoData->KeyId(), aCryptoData->KeyIdSize());
 
       auto itr = find_if(sDecryptors.rbegin(),
                          sDecryptors.rend(),
-                         [&](MarlinDecryptor* d)->bool{ return d->CanDecryptKey(kid); });
+                         [&](MS3Decryptor* d)->bool{ return d->CanDecryptKey(kid); });
 
       return (itr != sDecryptors.rend()) ? *itr : nullptr;
     }
@@ -95,8 +95,8 @@ public:
 
     virtual void Init(GMPDecryptorCallback* aCallback)
     {
-        LOGD(("MarlinDecryptor::Init"));
-        mCDM = new MarlinCdmInterface(MBB_UUID);
+        LOGD(("MS3Decryptor::Init"));
+        mCDM = new MarlinCdmInterface(MS3_UUID);
         mCallback = aCallback;
         sDecryptors.push_back(this);
     }
@@ -110,7 +110,7 @@ public:
                                uint32_t aInitDataSize,
                                GMPSessionType aSessionType)
     {
-        LOGD(("MarlinDecryptor::CreateSession"));
+        LOGD(("MS3Decryptor::CreateSession"));
         mcdm_status_t ret = OK;
         mcdm_SessionId_t sessionId = "";
         string dataType = string(aInitDataType, aInitDataTypeSize);
@@ -153,7 +153,7 @@ public:
                              const char* aSessionId,
                              uint32_t aSessionIdLength)
     {
-        LOGD(("MarlinDecryptor::LoadSession"));
+        LOGD(("MS3Decryptor::LoadSession"));
     }
 
     virtual void UpdateSession(uint32_t aPromiseId,
@@ -162,7 +162,7 @@ public:
                                const uint8_t* aResponse,
                                uint32_t aResponseSize)
     {
-        LOGD(("MarlinDecryptor::UpdateSession"));
+        LOGD(("MS3Decryptor::UpdateSession"));
         mcdm_status_t ret = OK;
         mcdm_SessionId_t sessionId = mcdm_SessionId_t(aSessionId, aSessionIdLength);
         string response = string((const char*)aResponse, aResponseSize);
@@ -218,6 +218,19 @@ public:
                                       const uint8_t* aServerCert,
                                       uint32_t aServerCertSize)
     {
+    }
+
+    void convertSubSampleInfoFwToMh(GMPEncryptedBufferMetadata* aMetadata,
+                                    mcdm_subsample_t **out_subSamples) {
+
+        const uint32_t num_subsamples = aMetadata->NumSubsamples();
+        const uint16_t* clear_bytes = aMetadata->ClearBytes();
+        const uint32_t* cipher_bytes = aMetadata->CipherBytes();
+
+        for (uint32_t i = 0; i < num_subsamples; i++) {
+          (*out_subSamples)[i].mNumBytesOfClearData = clear_bytes[i];
+          (*out_subSamples)[i].mNumBytesOfEncryptedData = cipher_bytes[i];
+        }
     }
 
     virtual void Decrypt(GMPBuffer* aBuffer,
@@ -294,19 +307,6 @@ private:
         COMPLETE
     };
 
-    void convertSubSampleInfoFwToMh(GMPEncryptedBufferMetadata* aMetadata,
-                                    mcdm_subsample_t **out_subSamples) {
-
-        const uint32_t num_subsamples = aMetadata->NumSubsamples();
-        const uint16_t* clear_bytes = aMetadata->ClearBytes();
-        const uint32_t* cipher_bytes = aMetadata->CipherBytes();
-
-        for (uint32_t i = 0; i < num_subsamples; i++) {
-          (*out_subSamples)[i].mNumBytesOfClearData = clear_bytes[i];
-          (*out_subSamples)[i].mNumBytesOfEncryptedData = cipher_bytes[i];
-        }
-    }
-
     respose_status_t getResponseStatus(const string request) {
         bool json_ret = false;
         const string prop_key = "properties";
@@ -366,14 +366,14 @@ private:
     uint32_t mDecryptNumber;
     eme_key_set mKeySet;
 
-}; // MarlinDecryptor class
+}; // MS3Decryptor class
 
 extern "C" {
 
 PUBLIC_FUNC GMPErr
 GMPInit(GMPPlatformAPI* aPlatformAPI)
 {
-    LOGD(("MarlinDecryptor GMPInit"));
+    LOGD(("MS3Decryptor GMPInit"));
     sPlatformAPI = aPlatformAPI;
     return GMPNoErr;
 }
@@ -381,9 +381,9 @@ GMPInit(GMPPlatformAPI* aPlatformAPI)
 PUBLIC_FUNC GMPErr
 GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
 {
-    LOGD(("MarlinDecryptor GMPGetAPI"));
+    LOGD(("MS3Decryptor GMPGetAPI"));
     if (!strcmp (aApiName, "eme-decrypt")) {
-        *aPluginApi = new MarlinDecryptor(reinterpret_cast<GMPDecryptorHost*>(aHostAPI));
+        *aPluginApi = new MS3Decryptor(reinterpret_cast<GMPDecryptorHost*>(aHostAPI));
       return GMPNoErr;
     }
     return GMPGenericErr;
@@ -392,7 +392,7 @@ GMPGetAPI(const char* aApiName, void* aHostAPI, void** aPluginApi)
 PUBLIC_FUNC void
 GMPShutdown(void)
 {
-    LOGD(("MarlinDecryptor GMPShutdown"));
+    LOGD(("MS3Decryptor GMPShutdown"));
     sPlatformAPI = nullptr;
 }
 
